@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    stdin_open: true
+    ports:
+      - "8080:8080"
