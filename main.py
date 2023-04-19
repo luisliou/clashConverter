@@ -1,7 +1,8 @@
 import re
 import sys
-import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
+import requests as requests
 import yaml
 
 
@@ -40,9 +41,10 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         url = parm[0].split('=')[1]
         data = parm[1].split('=')[1]
 
+        my_user_agent = {'User-agent': 'Mozilla/5.0'}
         # 下载网址内容
-        response = urllib.request.urlopen(url)
-        content = response.read().decode()
+        response = requests.get(url, headers=my_user_agent)
+        content = response.content.decode("utf-8")
         yaml_content = yaml.safe_load(content)
 
         process_with_data(yaml_content, data)
@@ -50,7 +52,7 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # 构建响应并返回
         self.send_response(200)
         # 复制网址响应的头部信息到本地响应
-        for key, value in response.getheaders():
+        for key, value in response.headers.items():
             if key == "Content-Length":
                 value = str(len(response_content))
             self.send_header(key, value)
