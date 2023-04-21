@@ -1,5 +1,6 @@
 import re
 import sys
+import html
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests as requests
@@ -45,7 +46,7 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # 下载网址内容
         response = requests.get(url, headers=my_user_agent)
         content = response.content.decode("utf-8")
-        yaml_content = yaml.safe_load(content)
+        yaml_content = yaml.unsafe_load(html.unescape(content.replace("!", "")))
 
         process_with_data(yaml_content, data)
         response_content = yaml.safe_dump(yaml_content, allow_unicode=True).encode()
